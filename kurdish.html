@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ku">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لیستی Street Burger</title>
+
+<style>
+html{
+    scroll-behavior:smooth; /* يخلي التنقل بين الأقسام يكون ناعم */
+}
+
+body{
+    margin:0; /* يشيل الفراغ الافتراضي */
+    font-family:Arial, sans-serif; /* نوع الخط */
+    background:#111; /* خلفية غامقة */
+    color:#fff; /* لون النص أبيض */
+    padding:20px; /* مسافة داخلية */
+    direction: rtl; /* اتجاه الكتابة من اليمين لليسار */
+}
+
+/* ڤیدیۆی پاشکەوت */
+/* فيديو الخلفية */
+.background-video {
+    position: fixed; /* يثبت الفيديو */
+    top: 0; /* يبدأ من الأعلى */
+    left: 0; /* يبدأ من اليسار */
+    width: 100%; /* عرض كامل */
+    height: 100%; /* ارتفاع كامل */
+    object-fit: cover; /* يغطي الشاشة بدون تشويه */
+    z-index: -2; /* خلف كل العناصر */
+}
+
+/* طبقة تعتيم */
+.overlay {
+    position: fixed; /* ثابت */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5); /* لون أسود شفاف */
+    z-index: -1; /* فوق الفيديو */
+}
+
+/* دوگمەکانی گەڕان */
+/* أزرار التنقل */
+.nav-buttons{
+    position:sticky; /* يبقى ثابت عند السكرول */
+    top:0; /* بالأعلى */
+    background:#111; /* نفس لون الخلفية */
+    padding:20px 0; /* مسافة فوق وتحت */
+    text-align:center; /* توسيط */
+    z-index:1000; /* فوق كل العناصر */
+    display:flex; /* ترتيب أفقي */
+    flex-wrap:wrap; /* ينزل سطر إذا ضاق */
+    justify-content:center; /* توسيط العناصر */
+}
+
+.nav-buttons a{
+    display:inline-block; /* يخلي الرابط مثل زر */
+    background:#f39c12; /* لون الزر */
+    color:#000; /* لون النص */
+    text-decoration:none; /* يشيل الخط */
+    padding:12px 28px; /* حجم الزر */
+    margin:0 8px; /* مسافة بين الأزرار */
+    border-radius:30px; /* حواف دائرية */
+    font-weight:bold; /* خط عريض */
+    transition:0.3s; /* حركة ناعمة */
+}
+
+.nav-buttons a:hover{
+    background:#ffae42; /* يتغير اللون */
+    transform:scale(1.05); /* يكبر شوي */
+}
+
+/* سەرپەڕەکان */
+/* العناوين */
+h2{
+    color:#f39c12; /* لون العنوان */
+    border-top:2px solid #f39c12; /* خط فوق */
+    border-bottom:2px solid #f39c12; /* خط تحت */
+    padding:10px 0; /* مسافة داخلية */
+    scroll-margin-top: 150px; /* يمنع تغطية العنوان */
+}
+
+/* بەشی لیست */
+/* عناصر القائمة */
+.menu-item{
+    display:flex; /* ترتيب أفقي */
+    justify-content:space-between; /* يفرق بين النص والسعر */
+    margin-bottom:25px; /* مسافة تحت */
+    flex-wrap:wrap; /* ينزل إذا الشاشة صغيرة */
+}
+
+.item-info{
+    max-width:75%; /* ياخذ 75% من العرض */
+}
+
+.item-name{
+    font-size:22px; /* حجم الاسم */
+    font-weight:bold; /* خط عريض */
+}
+
+.item-desc{
+    font-size:15px; /* حجم الوصف */
+    color:#ddd; /* لون فاتح */
+    margin-top:5px; /* مسافة فوق */
+}
+
+.price{
+    color:#f39c12; /* لون السعر */
+    font-size:18px; /* حجم السعر */
+    font-weight:bold; /* عريض */
+    white-space:nowrap; /* يمنع النزول لسطر */
+}
+
+/* دوگمەی گەڕانەوە */
+/* زر الرجوع */
+.back-btn{
+    text-align:center; /* توسيط */
+    margin:60px 0 20px; /* مسافة فوق وتحت */
+}
+
+.back-btn a{
+    background:#f39c12; /* لون الزر */
+    color:#000; /* لون النص */
+    padding:15px 35px; /* حجم */
+    border-radius:8px; /* حواف */
+    font-weight:bold; /* عريض */
+    text-decoration:none; /* بدون خط */
+    transition:0.3s; /* حركة */
+}
+
+.back-btn a:hover{
+    background:#ffae42; /* تغيير اللون */
+    transform:scale(1.05); /* تكبير */
+}
+
+/* پەیامەکانی فوتر */
+/* ملاحظة الفوتر */
+.footer-note{
+    font-size:13px; /* حجم صغير */
+    color:#aaa; /* لون خفيف */
+    margin-top:40px; /* مسافة فوق */
+    line-height:1.5; /* تباعد السطور */
+}
+
+/* مۆبایل */
+/* الموبايل */
+@media(max-width:768px){
+    .nav-buttons a{
+        padding:10px 15px; /* تصغير الأزرار */
+        font-size:14px; /* تصغير الخط */
+        margin:5px 3px; /* مسافة أقل */
+    }
+    .menu-item{
+        flex-direction:column; /* يتحول عمودي */
+    }
+    .item-info{
+        max-width:100%; /* ياخذ كامل العرض */
+    }
+    .price{
+        margin-top:5px; /* مسافة فوق السعر */
+    }
+}
+</style>
+</head>
+
+<body>
+<video class="background-video" autoplay muted loop playsinline>
+        <source src="ssasas.mp4" type="video/mp4">
+        متصفحك لا يدعم الفيديو
+    </video>
+    <!-- طبقة التعتيم -->
+    <div class="overlay"></div>
+
+<!-- دوگمەکانی گەڕان -->
+<div class="nav-buttons">
+    <a href="#burgers">برگر</a>
+    <a href="#sides">خواردنەکانی لایەنی</a>
+    <a href="#salads">سەلاتەکان</a>
+    <a href="#wings">بەستانەکان</a>
+    <a href="#dips">سۆسەکان</a>
+    <a href="#desserts">شیرینیەکان</a>
+    <a href="#cocktails">کۆکتێل</a>
+    <a href="#wine">شراب</a>
+    <a href="#beer">بیر</a>
+    <a href="#milkshakes">میڵک شیک</a>
+    <a href="#cold-drinks">خواردنە ساردەکان</a>
+    <a href="#hot-drinks">خواردنە گەرماکان</a>
+</div>
+
+<!-- برگر -->
+<h2 id="burgers">🍔 برگر</h2>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Street Burger</div>
+        <div class="item-desc">گوشت مەڕو، چیژە دەرخستە، رێلیش تایبەتی، توومات، پیاز سور و خێڵ</div>
+    </div>
+    <div class="price">12,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">O.G.R</div>
+        <div class="item-desc">گوشت، چیژە دەرخستە، باکۆن کراسپی، تەم تەم، خەس و توومات و سۆس رێلیش</div>
+    </div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">BAE</div>
+        <div class="item-desc">گوشت و چیژە دەرخستە، باکۆن کراسپی، تەم تەم، توومات، خەس و سۆس برگر</div>
+    </div>
+    <div class="price">11,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Hell's Kitchen</div>
+        <div class="item-desc">گوشت، خەس، توومات، پیاز سور، خێڵ، سۆس ستیریت، سۆس زۆر گەرما و چیژە دەرخستە</div>
+    </div>
+    <div class="price">11,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">برگر دجاج و ئافۆکادو</div>
+        <div class="item-desc">سینی مرۆ گریل کراو، ئافۆکادو، پیاز سور، خەس و توومات</div>
+    </div>
+    <div class="price">10,000</div>
+</div>
+
+
+<!-- ===== SIDES ===== -->
+<h2 id="sides">🍟 خواردنەوەکان</h2>
+
+<div class="menu-item">
+    <div class="item-name">فرایز</div>
+    <div class="item-desc">فرایزی فڕەنسی بە تامی نهێنی</div>
+    <div class="price">4,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">فرایزی شەکرین</div>
+    <div class="item-desc">فرایزی پەتاتای شەکرین بە تامی تایبەتی</div>
+    <div class="price">7,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Dirty Fries (Hotter Than Hell)</div>
+    <div class="item-desc">پەنیر موزارێلا، سۆسی توند، پیازی سور</div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">GFC Dirty Fries</div>
+    <div class="item-desc">مریشکی کیمچی توند، پەنیر موزارێلا و سۆسی GFC</div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">حەلقەی پیاز</div>
+    <div class="item-desc">حەلقەی پیاز بە تامی تایبەتی GFC</div>
+    <div class="price">5,750</div>
+</div>
+
+<!-- ===== SALADS ===== -->
+<h2 id="salads">🥗 سالاد</h2>
+
+<div class="menu-item">
+    <div class="item-name">سالادی کوتاو</div>
+    <div class="item-desc">کاهو، رادیکیۆ، تۆماتە، پیازی سور، پەنیری پێکۆرینۆ و سۆسی Street</div>
+    <div class="price">6,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">سالادی GFC</div>
+    <div class="item-desc">مریشکی تێکچوو، ئەڤۆکادۆ، کاهو، تۆماتە، پیازی سور و سۆسی GFC</div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Street Slaw</div>
+    <div class="item-desc">کۆلێسلاوی تایبەتی ماڵەوە</div>
+    <div class="price">3,000</div>
+</div>
+
+<!-- ===== DESSERTS ===== -->
+<h2 id="desserts">🍰 شیرینی</h2>
+
+<div class="menu-item">
+    <div class="item-name">سوندی فراوڵە و کریم</div>
+    <div class="item-desc">ئایسکرێمی نەرمی ڤانێلا، فراولە تازە، مارشمالۆ و شەربەتی فراولە</div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Sticky Toffee Pudding</div>
+    <div class="item-desc">پودینگی تۆفی تایبەت بە سۆسی تۆفی و ئایسکرێمی ڤانێلا</div>
+    <div class="price">11,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">ئایسکرێم نرمی ڤانێلا</div>
+    <div class="price">6,500</div>
+</div>
+
+<!-- ===== WINGS ===== -->
+<h2 id="wings">🍗 بال</h2>
+
+<div class="menu-item">
+    <div class="item-name">بال (٨ / ١٦ پارچە)</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Kimchi Wings</div>
+    <div class="item-desc">بالی سوڕ و کراسپی، فلفلی GFC، کیمچی شیرین و سەوزەکان</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">GFC Wings</div>
+    <div class="item-desc">بالی سوڕ و کراسپی، فلفلی GFC، سۆسی GFC و تووسەکان</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Street Hot Sauce Wings</div>
+    <div class="item-desc">بالی سوڕ و کراسپی، فلفلی GFC، سۆسی Street Hot</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Hotter Than Hell Wings</div>
+    <div class="item-desc">بالی سوڕ و کراسپی، فلفلی GFC، سۆسی توند و تووسەکان</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<!-- ===== DIPS ===== -->
+<h2 id="dips">🧂 سۆس</h2>
+
+<div class="menu-item">
+    <div class="item-name">مایۆنێزی سیرراچا</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">کیمچی شەربەتی شیرین</div>
+</div>
+
+<!-- ===== COCKTAILS ===== -->
+<h2 id="cocktails">🍹 کۆکتێل</h2>
+
+<div class="menu-item">
+    <div class="item-name">ستریت لانگ آیسلند</div>
+    <div class="item-desc">رام، وۆدکا، جینی Tanqueray، Cointreau، کۆک، ئەسیدی لیمۆ</div>
+    <div class="price">11,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">ستریت مارگاریتا</div>
+    <div class="item-desc">تیکیلە، لیکورۆ ڕۆژ، ئەسیدی لایم، ئاگاف نێکتەر</div>
+    <div class="price">14,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">هارد لیمۆنەید</div>
+    <div class="item-desc">وۆدکا، لیمۆنچێلو، لمۆنەیدەی ماڵی</div>
+    <div class="price">9,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">ئیسپرسۆ مارتینی</div>
+    <div class="item-desc">وۆدکا، لیکورۆ قەھوە، ئەسپریسو</div>
+    <div class="price">12,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">پەشن فڕوت مارتینی</div>
+    <div class="item-desc">وۆدکای Absolut، فڕۆتی پەشن، ڤانیلا</div>
+    <div class="price">11,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">پەشن فڕوت سپریتز</div>
+    <div class="item-desc">وۆدکا، پەشن فڕۆتی پۆری، شەربەتی ڤانیلا، پروسێکو، ئاو سۆدە</div>
+    <div class="price">11,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">گاردن فیز</div>
+    <div class="item-desc">جینی Tanqueray، ئەسیدی لیمۆ، جووسی خیار، ئاو تۆنیک</div>
+    <div class="price">11,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">گاردن کولر (بێ مێخوار)</div>
+    <div class="item-desc">جووسی خیار، ئەسیدی لیمۆ، ئاو تۆنیک</div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">لۆندۆن گاردن</div>
+    <div class="item-desc">جین، لیکورۆ گۆزی، Elderflower Cordial، لیمۆ</div>
+    <div class="price">11,500</div>
+</div>
+
+<!-- ===== WINE ===== -->
+<h2 id="wine">🍷 واین</h2>
+
+<div class="menu-item">
+    <div class="item-name">واین سور (شاتو سنت فلورین)</div>
+    <div class="price">35,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">واین سور (کسارا)</div>
+    <div class="price">38,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">واین سور خانە (پێنجە)</div>
+    <div class="price">8,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">واین سپی (شاتو سنت فلورین)</div>
+    <div class="price">35,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">واین سپی (کارا)</div>
+    <div class="price">38,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">واین سپی خانە (پێنجە)</div>
+    <div class="price">8,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">واین ڕۆز (شاتو لا بورن)</div>
+    <div class="price">35,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">واین ڕۆز (کسارا سەنست)</div>
+    <div class="price">38,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">واین ڕۆز خانە (پێنجە)</div>
+    <div class="price">8,000</div>
+</div>
+
+<!-- ===== BEER ===== -->
+<h2 id="beer">🍺 بیر</h2>
+
+<div class="menu-item">
+    <div class="item-name">کرۆمباخر (مێگ)</div>
+    <div class="price">8,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">هەینێکن (شیشە)</div>
+    <div class="price">6,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">ئالمازا (شیشە)</div>
+    <div class="price">6,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">پێرۆنی (شیشە)</div>
+    <div class="price">6,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">بەدوایزر (شیشە)</div>
+    <div class="price">7,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">کۆرۆنا (شیشە)</div>
+    <div class="price">7,750</div>
+</div>
+
+<!-- ===== MILKSHAKES ===== -->
+<h2 id="milkshakes">🥛 میلکشەیک</h2>
+
+<div class="menu-item">
+    <div class="item-name">میلکشەیک Oreo</div>
+    <div class="item-desc">بیسکویت Oreo، شیر، ئایسکرێم، و وەپی کریم</div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">میلکشەیک Sticky Toffee Pudding</div>
+    <div class="item-desc">کەیک Sticky Toffee Pudding، شیر، ئایسکرێم، کارامل، و وەپی کریم</div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">میلکشەیک کارامل خوێنی</div>
+    <div class="item-desc">شیر، ئایسکرێم، کارامل، پاپکۆرن، و وەپی کریم</div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Coke Float</div>
+    <div class="item-desc">کۆکاکولا، ئایسکرێمی ڤانێلا</div>
+    <div class="price">9,000</div>
+</div>
+
+<!-- ===== COLD DRINKS ===== -->
+<h2 id="cold-drinks">🥤 خواردنەوە سارد</h2>
+
+<div class="menu-item">
+    <div class="item-name">ئاوی بێ گاز بچووک</div>
+    <div class="price">2,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">ئاوی بێ گاز گەورە</div>
+    <div class="price">2,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">ئاوی گازدار بچووک</div>
+    <div class="price">3,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">ئاوی گازدار گەورە</div>
+    <div class="price">5,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">نوشابه توانای</div>
+    <div class="price">5,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">چای یخێکی هێلکە</div>
+    <div class="price">7,000</div>
+</div>
+
+<!-- ===== HOT DRINKS ===== -->
+<h2 id="hot-drinks">☕ خواردنەوە گەرم</h2>
+
+<div class="menu-item">
+    <div class="item-name">ئەسپرسۆ</div>
+    <div class="price">2,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">ئەسپرسۆ دووجارە</div>
+    <div class="price">3,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">کاپوچینو</div>
+    <div class="price">4,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">کافه لاته</div>
+    <div class="price">4,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">چای</div>
+    <div class="price">2,000</div>
+</div>
+
+<!-- فوتر -->
+<div class="footer-note">
+ئەگەر هەست بە هەساسیەتی خواردن، نەهاتنی خواردن یان هەساسیەتی پێوەندیدار هەبێت، تکایە پێش ئەوەی داوا بکەیت باسی سەرڤەر بکە.<br>
+• ١٠٪ خزمەتگوزاری بۆ قەبارەی کۆتایی زیاد دەکرێت. نرخەکان شامل باجەکانی تایبەتییە.
+</div>
+
+<!-- گەڕان بۆ ماڵەوە -->
+<div class="back-btn">
+    <a href="index.html">⬅ گەڕان بۆ سەرەکی</a>
+</div>
+
+</body>
+</html>

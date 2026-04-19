@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قائمة ستريت برجر</title>
+
+<style>
+html{
+    scroll-behavior:smooth; /* يخلي التنقل بين الأقسام ناعم */
+}
+
+body{
+    margin:0; /* يشيل الفراغ الخارجي */
+    font-family:Arial, sans-serif; /* نوع الخط */
+    background:#111; /* لون الخلفية غامق */
+    color:#fff; /* لون النص أبيض */
+    padding:20px; /* مسافة داخلية */
+    direction: rtl; /* اتجاه الكتابة عربي */
+}
+
+.background-video {
+    position: fixed; /* يثبت الفيديو بالخلف */
+    top: 0; /* من أعلى الصفحة */
+    left: 0; /* من اليسار */
+    width: 100%; /* عرض كامل */
+    height: 100%; /* ارتفاع كامل */
+    object-fit: cover; /* يملأ الشاشة بدون تشويه */
+    z-index: -2; /* خلف كل العناصر */
+}
+
+/* طبقة تعتيم */
+.overlay {
+    position: fixed; /* ثابت */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5); /* لون أسود شفاف */
+    z-index: -1; /* فوق الفيديو */
+}
+
+/* أزرار التنقل */
+.nav-buttons{
+    position:sticky; /* يبقى ثابت عند السكرول */
+    top:0; /* فوق */
+    background:#111; /* نفس لون الخلفية */
+    padding:20px 0; /* مسافة فوق وتحت */
+    text-align:center; /* توسيط النص */
+    z-index:1000; /* فوق كل العناصر */
+    display:flex; /* ترتيب أفقي */
+    flex-wrap:wrap; /* ينزل سطر إذا ضاق */
+    justify-content:center; /* توسيط العناصر */
+}
+
+.nav-buttons a{
+    display:inline-block; /* يخلي الرابط مثل زر */
+    background:#f39c12; /* لون الزر */
+    color:#000; /* لون النص */
+    text-decoration:none; /* يشيل الخط */
+    padding:12px 28px; /* حجم الزر */
+    margin:0 8px; /* مسافة بين الأزرار */
+    border-radius:30px; /* شكل دائري */
+    font-weight:bold; /* خط عريض */
+    transition:0.3s; /* حركة ناعمة */
+}
+
+.nav-buttons a:hover{
+    background:#ffae42; /* يتغير اللون */
+    transform:scale(1.05); /* يكبر شوي */
+}
+
+/* العناوين */
+h2{
+    color:#f39c12; /* لون العنوان */
+    border-top:2px solid #f39c12; /* خط فوق */
+    border-bottom:2px solid #f39c12; /* خط تحت */
+    padding:10px 0; /* مسافة داخلية */
+    scroll-margin-top: 150px; /* يمنع تغطية العنوان */
+}
+
+/* عناصر القائمة */
+.menu-item{
+    display:flex; /* ترتيب أفقي */
+    justify-content:space-between; /* يفرق بين النص والسعر */
+    margin-bottom:25px; /* مسافة تحت */
+    flex-wrap:wrap; /* ينزل إذا ضاق */
+}
+
+.item-info{
+    max-width:75%; /* ياخذ 75% من العرض */
+}
+
+.item-name{
+    font-size:22px; /* حجم الخط */
+    font-weight:bold; /* خط عريض */
+}
+
+.item-desc{
+    font-size:15px; /* حجم الوصف */
+    color:#ddd; /* لون فاتح */
+    margin-top:5px; /* مسافة فوق */
+}
+
+.price{
+    color:#f39c12; /* لون السعر */
+    font-size:18px; /* حجم السعر */
+    font-weight:bold; /* عريض */
+    white-space:nowrap; /* يمنع النزول لسطر */
+}
+
+/* زر العودة */
+.back-btn{
+    text-align:center; /* توسيط */
+    margin:60px 0 20px; /* مسافة فوق وتحت */
+}
+
+.back-btn a{
+    background:#f39c12; /* لون الزر */
+    color:#000; /* لون النص */
+    padding:15px 35px; /* حجم */
+    border-radius:8px; /* حواف */
+    font-weight:bold; /* عريض */
+    text-decoration:none; /* بدون خط */
+    transition:0.3s; /* حركة */
+}
+
+.back-btn a:hover{
+    background:#ffae42; /* تغيير اللون */
+    transform:scale(1.05); /* تكبير */
+}
+
+/* ملاحظة الفوتر */
+.footer-note{
+    font-size:13px; /* حجم صغير */
+    color:#aaa; /* لون خفيف */
+    margin-top:40px; /* مسافة فوق */
+    line-height:1.5; /* تباعد السطور */
+}
+
+/* موبايل */
+@media(max-width:768px){
+    .nav-buttons a{
+        padding:10px 15px; /* تصغير الأزرار */
+        font-size:14px; /* تصغير الخط */
+        margin:5px 3px; /* مسافة أقل */
+    }
+    .menu-item{
+        flex-direction:column; /* يصير عمودي */
+    }
+    .item-info{
+        max-width:100%; /* ياخذ كامل العرض */
+    }
+    .price{
+        margin-top:5px; /* مسافة فوق السعر */
+    }
+}
+</style>
+</head>
+
+<body>
+    <video class="background-video" autoplay muted loop playsinline>
+        <source src="ssasas.mp4" type="video/mp4">
+        متصفحك لا يدعم الفيديو
+    </video>
+    <!-- طبقة التعتيم -->
+    <div class="overlay"></div>
+<!-- أزرار التنقل -->
+<div class="nav-buttons">
+    <a href="#burgers">برجر</a>
+    <a href="#sides">أطباق جانبية</a>
+    <a href="#salads">سلطات</a>
+    <a href="#wings">أجنحة</a>
+    <a href="#dips">صلصات</a>
+    <a href="#desserts">حلويات</a>
+    <a href="#cocktails">كوكتيلات</a>
+    <a href="#wine">نبيذ</a>
+    <a href="#beer">بيرة</a>
+    <a href="#milkshakes">ميلك شيك</a>
+    <a href="#cold-drinks">مشروبات باردة</a>
+    <a href="#hot-drinks">مشروبات ساخنة</a>
+</div>
+
+<!-- البرجر -->
+<h2 id="burgers">🍔 برجر</h2>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">ستريت برجر</div>
+        <div class="item-desc">لحم بقري، جبنة مدخنة، ريليش خاص، طماطم، بصل أحمر ومخللات</div>
+    </div>
+    <div class="price">12,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">O.G.R</div>
+        <div class="item-desc">فطيرة لحم، جبنة مدخنة، بصل مقلي، بيض مقلي، خس، طماطم وصلصة ريليش</div>
+    </div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">BAE</div>
+        <div class="item-desc">فطيرة لحم، جبنة مدخنة، بصل مقلي، بيض مقلي، طماطم وخس مع صلصة البرجر</div>
+    </div>
+    <div class="price">11,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Hell's Kitchen</div>
+        <div class="item-desc">لحم بقري، خس، طماطم، بصل أحمر، مخللات، صلصة ستريت، صلصة حارة وجبنة مدخنة</div>
+    </div>
+    <div class="price">11,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">دجاج وأفوكادو</div>
+        <div class="item-desc">صدر دجاج مشوي، أفوكادو مهروس، بصل أحمر، خس وطماطم</div>
+    </div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Next Level</div>
+        <div class="item-desc">فطيرتي لحم مزدوجة، جبنة أمريكية، بصل ومايونيز سبايسي</div>
+    </div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">GFC دجاج</div>
+        <div class="item-desc">فخذ دجاج متبل، هاش براون، خس، جبنة ذائبة وصلصة GFC</div>
+    </div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Truffle برجر</div>
+        <div class="item-desc">فطيرتي لحم مزدوجة، جبنة، زبدة الكمأة، أيولي بالثوم والكمأة، خس وبصل أحمر مخلل</div>
+    </div>
+    <div class="price">15,000</div>
+</div>
+
+<!-- ===== الوجبات الجانبية ===== -->
+<h2 id="sides">🍟 الوجبات الجانبية</h2>
+
+<div class="menu-item">
+    <div class="item-name">بطاطس مقلية</div>
+    <div class="item-desc">بطاطس مقلية مع توابل سرية</div>
+    <div class="price">4,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">بطاطس حلوة مقلية</div>
+    <div class="item-desc">بطاطس حلوة مقلية مع توابل سرية</div>
+    <div class="price">7,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">بطاطس حارة جدًا</div>
+    <div class="item-desc">جبنة موزاريلا ذائبة، صلصة حارة جدًا، بصل أحمر</div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">بطاطس GFC الخاصة</div>
+    <div class="item-desc">فخذ دجاج متبل بالكيمتشي، جبنة موزاريلا ذائبة، صلصة GFC</div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">حلقات البصل</div>
+    <div class="item-desc">حلقات البصل مغطاة بتوابل GFC الخاصة، مع صلصة GFC</div>
+    <div class="price">5,750</div>
+</div>
+
+<!-- ===== السلطات ===== -->
+<h2 id="salads">🥗 السلطات</h2>
+
+<div class="menu-item">
+    <div class="item-name">سلطة مقطعة</div>
+    <div class="item-desc">خس، راديكيو، طماطم، فلفل بيكويلو، بصل أحمر، بيكورينو، حمص مقرمش، صلصة الشارع</div>
+    <div class="price">6,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">سلطة GFC</div>
+    <div class="item-desc">فخذ دجاج متبل، أفوكادو مهروس، صلصة GFC، طماطم، فلفل محمص، خس، لولو روسو، بصل أحمر مع صلصة الشارع</div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">ستريت سلّاو</div>
+    <div class="item-desc">سلطة كولسلو خاصة بنا</div>
+    <div class="price">3,000</div>
+</div>
+
+<!-- ===== الأجنحة ===== -->
+<h2 id="wings">🍗 الأجنحة</h2>
+
+<div class="menu-item">
+    <div class="item-name">أجنحة (٨ / ١٦ قطعة)</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">أجنحة كيمتشي</div>
+    <div class="item-desc">أجنحة دجاج مقرمشة، توابل GFC، كيمتشي حلو حار وبصل أخضر</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">أجنحة GFC</div>
+    <div class="item-desc">أجنحة دجاج مقرمشة، توابل GFC، صلصة GFC، سمسم</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">أجنحة صوص حار الشارع</div>
+    <div class="item-desc">أجنحة دجاج مقرمشة، توابل GFC، صوص حار الشارع</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">أجنحة حارة جدًا</div>
+    <div class="item-desc">أجنحة دجاج مقرمشة، توابل GFC، صلصة حارة جدًا، سمسم</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<!-- ===== الصوصات ===== -->
+<h2 id="dips">🧂 الصوصات</h2>
+
+<div class="menu-item">
+    <div class="item-name">مايونيز سيراتشا</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">كيمتشي حلو حار</div>
+</div>
+
+<!-- ===== الحلويات ===== -->
+<h2 id="desserts">🍰 الحلويات</h2>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">سوفليه الفراولة والكريمة</div>
+        <div class="item-desc">آيس كريم سهل، مع مارشميلو، فراولة طازجة وصلصة فراولة</div>
+    </div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">بودينغ التوفي</div>
+        <div class="item-desc">بودينغ التوفي الخاص، مع صلصة التوفي وآيس كريم الفانيلا</div>
+    </div>
+    <div class="price">11,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">آيس كريم سهل</div>
+    <div class="price">6,500</div>
+</div>
+
+<!-- ===== الكوكتيلات ===== -->
+<h2 id="cocktails">🍸 الكوكتيلات (كحولية)</h2>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">ستريت لونغ آيلاند</div>
+        <div class="item-desc">روم، فودكا كيتل وان، جين تانكري، كونترو، كوكاكولا، عصير ليمون</div>
+    </div>
+    <div class="price">11,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">ستريت مارجريتا</div>
+        <div class="item-desc">تكيلا، ليكيور برتقال، عصير ليمون، نكتار الأغاف</div>
+    </div>
+    <div class="price">14,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">هارد ليمونيد</div>
+        <div class="item-desc">فودكا، ليمونسيللو، ليمونادة منزلية</div>
+    </div>
+    <div class="price">9,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">إسبريسو مارتيني</div>
+        <div class="item-desc">فودكا، ليكيور قهوة، إسبريسو</div>
+    </div>
+    <div class="price">12,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">باشن فروت مارتيني</div>
+        <div class="item-desc">أبسولوت فودكا، فاكهة باشن، فانيلا</div>
+    </div>
+    <div class="price">11,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">باشن فروت سبريتز</div>
+        <div class="item-desc">فودكا، بيوريه فاكهة باشن، شراب فانيلا، بروسيكو، مياه صودا</div>
+    </div>
+    <div class="price">11,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">جاردن فيز</div>
+        <div class="item-desc">جين تانكري، عصير ليمون، عصير خيار، مياه التونيك</div>
+    </div>
+    <div class="price">11,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">جاردن كولر (غير كحولي)</div>
+        <div class="item-desc">عصير خيار، عصير ليمون، مياه التونيك</div>
+    </div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">لندن جاردن</div>
+        <div class="item-desc">جين، ليكيور خوخ، شراب أزهار البلسان، ليمون</div>
+    </div>
+    <div class="price">11,500</div>
+</div>
+
+<!-- ===== النبيذ ===== -->
+<h2 id="wine">🍷 النبيذ</h2>
+
+<div class="menu-item">
+    <div class="item-name">نبيذ أحمر - Chateau Saint Florin Bordeaux (زجاجة)</div>
+    <div class="price">35,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">نبيذ أحمر - Kasara Reserve du Couvent (زجاجة)</div>
+    <div class="price">38,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">كأس نبيذ أحمر</div>
+    <div class="price">8,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">نبيذ أبيض - Chateau Saint Florin Sauvignon Blanc (زجاجة)</div>
+    <div class="price">35,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">نبيذ أبيض - Kara Blanc de Blanc (زجاجة)</div>
+    <div class="price">38,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">كأس نبيذ أبيض</div>
+    <div class="price">8,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">نبيذ روز - Chateau La Borne Rose Wine (زجاجة)</div>
+    <div class="price">35,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">نبيذ روز - Ksara Sunset (زجاجة)</div>
+    <div class="price">38,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">كأس نبيذ روز</div>
+    <div class="price">8,000</div>
+</div>
+
+<!-- ===== البيرة ===== -->
+<h2 id="beer">🍺 البيرة</h2>
+
+<div class="menu-item">
+    <div class="item-name">Krombacher (كوب)</div>
+    <div class="price">8,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Heineken (زجاجة)</div>
+    <div class="price">6,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Almaza (زجاجة)</div>
+    <div class="price">6,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Peroni (زجاجة)</div>
+    <div class="price">6,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Budweiser (زجاجة)</div>
+    <div class="price">7,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Corona (زجاجة)</div>
+    <div class="price">7,750</div>
+</div>
+
+<!-- ===== الميلك شيك ===== -->
+<h2 id="milkshakes">🥛 الميلك شيك</h2>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">أوريو ميلك شيك</div>
+        <div class="item-desc">بسكويت أوريو، حليب، آيس كريم، topped بالكريمة المخفوقة</div>
+    </div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">ميلك شيك بودينغ التوفي</div>
+        <div class="item-desc">بودينغ التوفي، حليب، آيس كريم، صوص الكراميل المملح، كريمة مخفوقة</div>
+    </div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">ميلك شيك الكراميل المملح</div>
+        <div class="item-desc">حليب، آيس كريم، صوص الكراميل المملح، فشار، كريمة مخفوقة</div>
+    </div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">كوكاكولا فلووت</div>
+        <div class="item-desc">كوكاكولا، آيس كريم فانيلا سوفت سيرف</div>
+    </div>
+    <div class="price">9,000</div>
+</div>
+
+<!-- ===== المشروبات الباردة ===== -->
+<h2 id="cold-drinks">🥤 المشروبات الباردة</h2>
+
+<div class="menu-item">
+    <div class="item-name">مياه صغيرة عادية</div>
+    <div class="price">1,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">مياه كبيرة عادية</div>
+    <div class="price">2,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">مياه صغيرة فوارة</div>
+    <div class="price">3,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">مياه كبيرة فوارة</div>
+    <div class="price">5,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">مشروب طاقة</div>
+    <div class="price">5,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">شاي مثلج بالخوخ</div>
+    <div class="price">7,000</div>
+</div>
+
+<!-- ===== المشروبات الساخنة ===== -->
+<h2 id="hot-drinks">☕ المشروبات الساخنة</h2>
+
+<div class="menu-item">
+    <div class="item-name">إسبريسو</div>
+    <div class="price">2,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">إسبريسو مزدوج</div>
+    <div class="price">3,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">كابتشينو</div>
+    <div class="price">4,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">كافيه لاتيه</div>
+    <div class="price">4,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">شاي</div>
+    <div class="price">2,000</div>
+</div>
+<div class="footer-note">
+إذا كان لديك أي حساسية من الطعام، أو عدم تحمل، أو حساسية تجاه مكون معين، يرجى التحدث مع النادل قبل الطلب.<br>
+• سيتم إضافة رسوم خدمة بنسبة 10% إلى الفاتورة النهائية. الأسعار تشمل الضريبة.
+</div>
+
+<!-- BACK HOME -->
+<div class="back-btn">
+    <a href="index.html">⬅ العودة للرئيسية</a>
+</div>
+
+</body>
+</html>

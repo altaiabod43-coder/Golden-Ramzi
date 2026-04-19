@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Street Burger Menu</title>
+
+<style>
+html{
+    scroll-behavior:smooth; /* يخلي التنقل بين الأقسام ناعم */
+}
+
+body{
+    margin:0; /* يشيل الفراغ الافتراضي */
+    font-family:Arial, sans-serif; /* نوع الخط */
+    background:#111; /* خلفية غامقة */
+    color:#fff; /* لون النص أبيض */
+    padding:20px; /* مسافة داخلية */
+}
+
+.background-video {
+    position: fixed; /* يثبت الفيديو بالخلف */
+    top: 0; /* من الأعلى */
+    left: 0; /* من اليسار */
+    width: 100%; /* يغطي العرض */
+    height: 100%; /* يغطي الارتفاع */
+    object-fit: cover; /* يملأ الشاشة بدون تشويه */
+    z-index: -2; /* خلف كل العناصر */
+}
+
+/* طبقة تعتيم */
+.overlay {
+    position: fixed; /* ثابت */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5); /* لون أسود شفاف */
+    z-index: -1; /* فوق الفيديو */
+}
+
+/* NAV BUTTONS */
+.nav-buttons{
+    position:sticky; /* يبقى ثابت عند السكرول */
+    top:0; /* بالأعلى */
+    background:#111; /* لون الخلفية */
+    padding:20px 0; /* مسافة فوق وتحت */
+    text-align:center; /* توسيط */
+    z-index:1000; /* فوق كلشي */
+    display:flex; /* ترتيب أفقي */
+    flex-wrap:wrap; /* ينزل إذا ضاق */
+    justify-content:center; /* توسيط العناصر */
+}
+
+.nav-buttons a{
+    display:inline-block; /* يخلي الرابط مثل زر */
+    background:#f39c12; /* لون الزر */
+    color:#000; /* لون النص */
+    text-decoration:none; /* يشيل الخط */
+    padding:12px 28px; /* حجم الزر */
+    margin:0 8px; /* مسافة بين الأزرار */
+    border-radius:30px; /* حواف دائرية */
+    font-weight:bold; /* خط عريض */
+    transition:0.3s; /* حركة ناعمة */
+}
+
+.nav-buttons a:hover{
+    background:#ffae42; /* يتغير اللون */
+    transform:scale(1.05); /* يكبر شوي */
+}
+
+/* HEADERS */
+h2{
+    color:#f39c12; /* لون العنوان */
+    border-top:2px solid #f39c12; /* خط فوق */
+    border-bottom:2px solid #f39c12; /* خط تحت */
+    padding:10px 0; /* مسافة داخلية */
+    scroll-margin-top: 150px; /* يمنع تغطية العنوان عند التنقل */
+}
+
+/* MENU ITEMS */
+.menu-item{
+    display:flex; /* ترتيب أفقي */
+    justify-content:space-between; /* يفرق بين النص والسعر */
+    margin-bottom:25px; /* مسافة تحت */
+    flex-wrap:wrap; /* ينزل إذا الشاشة صغيرة */
+}
+
+.item-info{
+    max-width:75%; /* ياخذ 75% من العرض */
+}
+
+.item-name{
+    font-size:22px; /* حجم الاسم */
+    font-weight:bold; /* خط عريض */
+}
+
+.item-desc{
+    font-size:15px; /* حجم الوصف */
+    color:#ddd; /* لون فاتح */
+    margin-top:5px; /* مسافة فوق */
+}
+
+.price{
+    color:#f39c12; /* لون السعر */
+    font-size:18px; /* حجم */
+    font-weight:bold; /* عريض */
+    white-space:nowrap; /* يمنع النزول لسطر */
+}
+
+/* BACK BUTTON */
+.back-btn{
+    text-align:center; /* توسيط */
+    margin:60px 0 20px; /* مسافة فوق وتحت */
+}
+
+.back-btn a{
+    background:#f39c12; /* لون الزر */
+    color:#000; /* لون النص */
+    padding:15px 35px; /* حجم */
+    border-radius:8px; /* حواف */
+    font-weight:bold; /* عريض */
+    text-decoration:none; /* بدون خط */
+    transition:0.3s; /* حركة */
+}
+
+.back-btn a:hover{
+    background:#ffae42; /* تغيير اللون */
+    transform:scale(1.05); /* تكبير */
+}
+
+/* FOOTER NOTE */
+.footer-note{
+    font-size:13px; /* خط صغير */
+    color:#aaa; /* لون خفيف */
+    margin-top:40px; /* مسافة فوق */
+    line-height:1.5; /* تباعد السطور */
+}
+
+/* MOBILE MEDIA QUERY */
+@media(max-width:768px){
+    .nav-buttons a{
+        padding:10px 15px; /* تصغير الأزرار */
+        font-size:14px; /* تصغير الخط */
+        margin:5px 3px; /* مسافة أقل */
+    }
+    .menu-item{
+        flex-direction:column; /* يتحول عمودي */
+    }
+    .item-info{
+        max-width:100%; /* ياخذ كامل العرض */
+    }
+    .price{
+        margin-top:5px; /* مسافة فوق السعر */
+    }
+}
+</style>
+</head>
+
+<body>
+    <video class="background-video" autoplay muted loop playsinline>
+        <source src="ssasas.mp4" type="video/mp4">
+        متصفحك لا يدعم الفيديو
+    </video>
+    <!-- طبقة التعتيم -->
+    <div class="overlay"></div>
+
+
+<!-- NAV BUTTONS -->
+<div class="nav-buttons">
+    <a href="#burgers">Burgers</a>
+    <a href="#sides">Sides</a>
+    <a href="#salads">Salads</a>
+    <a href="#wings">Wings</a>
+    <a href="#dips">Dips</a>
+    <a href="#desserts">Desserts</a>
+    <a href="#cocktails">Cocktails</a>
+    <a href="#wine">Wine</a>
+    <a href="#beer">Beer</a>
+    <a href="#milkshakes">Milkshakes</a>
+    <a href="#cold-drinks">Cold Drinks</a>
+    <a href="#hot-drinks">Hot Drinks</a>
+</div>
+
+<!-- BURGERS -->
+<h2 id="burgers">🍔 Burgers</h2>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Street Burger</div>
+        <div class="item-desc">Grass-fed beef, smoked applewood cheese, house relish, tomato, red onion & gherkins</div>
+    </div>
+    <div class="price">12,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">O.G.R</div>
+        <div class="item-desc">Beef patty, smoked cheese, crispy bacon, fried egg, iceberg lettuce, tomato & relish sauce</div>
+    </div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">BAE</div>
+        <div class="item-desc">Beef patty, smoked cheese, crispy bacon, fried egg, tomato, iceberg lettuce & burger relish sauce</div>
+    </div>
+    <div class="price">11,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Hell's Kitchen</div>
+        <div class="item-desc">Grass-fed beef, iceberg lettuce, tomato, red onion, gherkins, street dressing, hotter than hell salsa & smoked cheese</div>
+    </div>
+    <div class="price">11,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Chicken & Avo Burger</div>
+        <div class="item-desc">Grilled lemon & herb chicken breast, smashed avocado, red onion, iceberg lettuce & tomato</div>
+    </div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Next Level</div>
+        <div class="item-desc">Smashed double beef patties, American cheese, onion & sriracha mayonnaise</div>
+    </div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">GFC Chicken</div>
+        <div class="item-desc">Marinated chicken thigh, hash brown, iceberg lettuce, melted cheese & GFC sauce</div>
+    </div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Truffle Burger</div>
+        <div class="item-desc">Smashed double beef patties, cheese, truffle butter, truffle garlic aioli, iceberg lettuce & pickled red onion</div>
+    </div>
+    <div class="price">15,000</div>
+</div>
+
+<!-- SIDES -->
+<h2 id="sides">🍟 Sides & Shares</h2>
+
+<div class="menu-item">
+    <div class="item-name">French Fries</div>
+    <div class="item-desc">French fries with secret seasoning</div>
+    <div class="price">4,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Sweet Potato Fries</div>
+    <div class="item-desc">Sweet potato fries with secret seasoning</div>
+    <div class="price">7,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Hotter Than Hell Dirty Fries</div>
+    <div class="item-desc">Melted mozzarella, hotter than hell salsa, hotter than hell sauce, red onion</div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">GFC Dirty Fries</div>
+    <div class="item-desc">Spicy kimchi marinated chicken thigh, melted mozzarella & signature GFC sauce</div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Onion Rings</div>
+    <div class="item-desc">Onion rings coated in special GFC seasoning with secret sauce</div>
+    <div class="price">5,750</div>
+</div>
+
+<!-- SALADS -->
+<h2 id="salads">🥗 Salads</h2>
+
+<div class="menu-item">
+    <div class="item-name">Chopped Salad</div>
+    <div class="item-desc">Iceberg lettuce, radicchio, tomato, piquillo pepper, red onion, pecorino, crispy chickpeas, street dressing</div>
+    <div class="price">6,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">GFC Salad</div>
+    <div class="item-desc">Marinated chicken thigh, smashed avocado, signature GFC sauce, tomato, roasted pepper, iceberg lettuce, Lolo Rosso, red onion & street dressing</div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Street Slaw</div>
+    <div class="item-desc">House coleslaw salad dip</div>
+    <div class="price">3,000</div>
+</div>
+
+<!-- WINGS -->
+<h2 id="wings">🍗 Wings</h2>
+
+<div class="menu-item">
+    <div class="item-name">Wings (8 / 16 pcs)</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Kimchi Wings</div>
+    <div class="item-desc">Crispy chicken wings, GFC seasoning, sweet chili kimchi & spring onions</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">GFC Wings</div>
+    <div class="item-desc">Crispy chicken wings, GFC seasoning, GFC sauce, sesame seeds</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Street Hot Sauce Wings</div>
+    <div class="item-desc">Crispy chicken wings, GFC seasoning, street hot sauce</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Hotter Than Hell Wings</div>
+    <div class="item-desc">Crispy chicken wings, GFC seasoning, hotter than hell sauce, sesame seeds</div>
+    <div class="price">8,500 / 14,000</div>
+</div>
+
+<!-- DIPS -->
+<h2 id="dips">🧂 Dips</h2>
+<div class="menu-item"><div class="item-name">Sriracha Mayo</div></div>
+<div class="menu-item"><div class="item-name">Sweet Chilli Kimchi</div></div>
+
+<!-- DESSERTS -->
+<h2 id="desserts">🍰 Desserts</h2>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Strawberries & Cream Sundae</div>
+        <div class="item-desc">Soft serve ice cream, marshmallows, fresh strawberries & strawberry syrup</div>
+    </div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Sticky Toffee Pudding</div>
+        <div class="item-desc">Special toffee pudding topped with toffee sauce & vanilla ice cream</div>
+    </div>
+    <div class="price">11,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Soft Serve Ice Cream</div>
+    <div class="price">6,500</div>
+</div>
+
+<!-- COCKTAILS -->
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Street Long Island</div>
+        <div class="item-desc">Rum, Ketel One Vodka, Tanqueray Gin, Cointreau, Coke, Lemon Juice</div>
+    </div>
+    <div class="price">11,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Street Margarita</div>
+        <div class="item-desc">Tequila, Orange Liqueur, Lime Juice, Agave Nectar</div>
+    </div>
+    <div class="price">14,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Hard Lemonade</div>
+        <div class="item-desc">Vodka, Limoncello, Homemade Lemonade</div>
+    </div>
+    <div class="price">9,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Espresso Martini</div>
+        <div class="item-desc">Vodka, Coffee Liqueur, Espresso</div>
+    </div>
+    <div class="price">12,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Passionfruit Martini</div>
+        <div class="item-desc">Absolut Vodka, Passionfruit, Vanilla</div>
+    </div>
+    <div class="price">11,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Passionfruit Spritz</div>
+        <div class="item-desc">Vodka, Passionfruit Purée, Vanilla Syrup, Prosecco, Soda Water</div>
+    </div>
+    <div class="price">11,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Garden Fizz</div>
+        <div class="item-desc">Tanqueray Gin, Lemon Juice, Cucumber Juice, Tonic Water</div>
+    </div>
+    <div class="price">11,250</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Garden Cooler (Non-Alcoholic)</div>
+        <div class="item-desc">Cucumber Juice, Lemon Juice, Tonic Water</div>
+    </div>
+    <div class="price">10,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">London Garden</div>
+        <div class="item-desc">Gin, Peach Liqueur, Elderflower Cordial, Lemon</div>
+    </div>
+    <div class="price">11,500</div>
+</div>
+
+<!-- ===== WINE ===== -->
+<h2 id="wine">🍷 Wine</h2>
+
+<div class="menu-item">
+    <div class="item-name">Red Wine (Chateau Saint Florin Bordeaux Bottle)</div>
+    <div class="price">35,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Red Wine (Ksara Reserve du Couvent Bottle)</div>
+    <div class="price">38,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">House Red Wine (Glass)</div>
+    <div class="price">8,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">White Wine (Chateau Saint Florin Sauvignon Blanc Bottle)</div>
+    <div class="price">35,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">White Wine (Kara Blanc de Blanc Bottle)</div>
+    <div class="price">38,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">House White Wine (Glass)</div>
+    <div class="price">8,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Rosé Wine (Chateau La Borne Bottle)</div>
+    <div class="price">35,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Rosé Wine (Ksara Sunset Bottle)</div>
+    <div class="price">38,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">House Rosé Wine (Glass)</div>
+    <div class="price">8,000</div>
+</div>
+
+<!-- ===== BEER ===== -->
+<h2 id="beer">🍺 Beer</h2>
+
+<div class="menu-item">
+    <div class="item-name">Krombacher (Mug)</div>
+    <div class="price">8,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Heineken (Bottle)</div>
+    <div class="price">6,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Almaza (Bottle)</div>
+    <div class="price">6,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Peroni (Bottle)</div>
+    <div class="price">6,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Budweiser (Bottle)</div>
+    <div class="price">7,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Corona (Bottle)</div>
+    <div class="price">7,750</div>
+</div>
+
+<!-- ===== MILKSHAKES ===== -->
+<h2 id="milkshakes">🥛 Milkshakes</h2>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Oreo Milkshake</div>
+        <div class="item-desc">Oreo biscuits, milk, ice cream, topped with whipped cream</div>
+    </div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Sticky Toffee Pudding Milkshake</div>
+        <div class="item-desc">Sticky Toffee Pudding Cake, milk, ice cream, salted caramel, whipped cream</div>
+    </div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Salted Caramel Milkshake</div>
+        <div class="item-desc">Milk, ice cream, salted caramel, popcorn, whipped cream</div>
+    </div>
+    <div class="price">10,750</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-info">
+        <div class="item-name">Coke Float</div>
+        <div class="item-desc">Coca-Cola, vanilla soft serve ice cream</div>
+    </div>
+    <div class="price">9,000</div>
+</div>
+
+<!-- ===== COLD DRINKS ===== -->
+<h2 id="cold-drinks">🥤 Cold Drinks</h2>
+
+<div class="menu-item">
+    <div class="item-name">Small Still Water</div>
+    <div class="price">2,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Large Still Water</div>
+    <div class="price">2,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Small Sparkling Water</div>
+    <div class="price">3,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Large Sparkling Water</div>
+    <div class="price">5,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Energy Drink</div>
+    <div class="price">5,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Iced Tea Peach</div>
+    <div class="price">7,000</div>
+</div>
+
+<!-- ===== HOT DRINKS ===== -->
+<h2 id="hot-drinks">☕ Hot Drinks</h2>
+
+<div class="menu-item">
+    <div class="item-name">Espresso</div>
+    <div class="price">2,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Double Espresso</div>
+    <div class="price">3,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Cappuccino</div>
+    <div class="price">4,000</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Café Latte</div>
+    <div class="price">4,500</div>
+</div>
+
+<div class="menu-item">
+    <div class="item-name">Tea</div>
+    <div class="price">2,000</div>
+</div>
+
+
+<!-- FOOTER NOTE -->
+<div class="footer-note">
+If you have a food allergy, intolerance, or sensitivity, please speak to your server about ingredients in our dishes before you order your meal.<br>
+• A 10% service charge will be added to your final bill. Prices include VAT.
+</div>
+
+<!-- BACK HOME -->
+<div class="back-btn">
+    <a href="index.html">⬅ Back to Home</a>
+</div>
+
+</body>
+</html>

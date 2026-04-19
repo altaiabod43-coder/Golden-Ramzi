@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Street Burger Home</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="fontawesome-free-7.1.0-web/css/all.css">
+
+    <style>
+    html, body {
+        margin: 0; /* يشيل الفراغ الخارجي */
+        padding: 0; /* يشيل الفراغ الداخلي */
+        height: 100%; /* يخلي الصفحة بطول كامل الشاشة */
+        font-family: Arial, sans-serif; /* نوع الخط */
+        overflow: hidden; /* يمنع السكرول (ما تقدر تنزل) */
+    }
+
+    /* فيديو الخلفية */
+    .background-video {
+        position: fixed; /* يثبت الفيديو */
+        top: 0; /* من الأعلى */
+        left: 0; /* من اليسار */
+        width: 100%; /* عرض كامل */
+        height: 100%; /* ارتفاع كامل */
+        object-fit: cover; /* يملأ الشاشة بدون تشويه */
+        z-index: -2; /* خلف كل العناصر */
+    }
+
+    /* طبقة تعتيم */
+    .overlay {
+        position: fixed; /* ثابت */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5); /* لون أسود شفاف */
+        z-index: -1; /* فوق الفيديو */
+    }
+
+    /* المحتوى */
+    .content {
+        position: relative; /* حتى يشتغل z-index */
+        z-index: 1; /* فوق الفيديو والتعتيم */
+        height: 100vh; /* نفس ارتفاع الشاشة */
+        display: flex; /* استخدام flex */
+        flex-direction: column; /* ترتيب عمودي */
+        justify-content: center; /* توسيط عمودي */
+        align-items: center; /* توسيط أفقي */
+        gap: 30px; /* مسافة بين العناصر */
+        text-align: center; /* توسيط النص */
+        color: #fff; /* لون النص */
+    }
+
+    h1 {
+        font-size: 48px; /* حجم كبير */
+        color: #f39c12; /* لون برتقالي */
+        text-shadow: 2px 2px 5px #000; /* ظل للنص */
+        margin: 0; /* يشيل الفراغ */
+    }
+
+    .buttons {
+        display: flex; /* ترتيب أفقي */
+        gap: 30px; /* مسافة بين الأزرار */
+        flex-wrap: wrap; /* ينزل سطر إذا ضاق */
+    }
+
+    .buttons button {
+        background: #f39c12; /* لون الزر */
+        color: #000; /* لون النص */
+        border: none; /* بدون حدود */
+        padding: 20px 50px; /* حجم الزر */
+        font-size: 22px; /* حجم الخط */
+        font-weight: bold; /* خط عريض */
+        cursor: pointer; /* شكل اليد */
+        border-radius: 12px; /* حواف دائرية */
+        box-shadow: 2px 2px 10px #000; /* ظل */
+        transition: 0.3s; /* حركة ناعمة */
+        min-width: 180px; /* أقل عرض للزر */
+    }
+
+    .buttons button:hover {
+        background: #ffae42; /* تغيير اللون */
+        transform: scale(1.1); /* تكبير عند المرور */
+    }
+
+    /* أيقونات التواصل + الموقع */
+    .social-icons {
+        position: fixed; /* ثابت */
+        bottom: 20px; /* أسفل الصفحة */
+        left: 50%; /* بالوسط */
+        transform: translateX(-50%); /* توسيط حقيقي */
+        display: flex; /* ترتيب أفقي */
+        gap: 35px; /* مسافة بين الأيقونات */
+        z-index: 2; /* فوق كلشي */
+    }
+
+    .social-icons a {
+        color: #fff; /* لون الأيقونات */
+        font-size: 38px; /* حجم كبير */
+        text-shadow: 2px 2px 6px #000; /* ظل */
+        transition: 0.3s; /* حركة */
+    }
+
+    .social-icons a:hover {
+        transform: scale(1.25); /* تكبير */
+    }
+
+    .social-icons a:hover .fa-instagram {
+        color: #E1306C; /* لون انستغرام */
+    }
+
+    .social-icons a:hover .fa-facebook-f {
+        color: #1877F2; /* لون فيسبوك */
+    }
+
+    .social-icons a:hover .fa-location-dot {
+        color: #e74c3c; /* لون الموقع */
+    }
+
+    /* موبايل */
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 34px; /* تصغير العنوان */
+        }
+
+        .buttons {
+            flex-direction: column; /* يصير عمودي */
+            gap: 18px; /* مسافة أقل */
+        }
+
+        .buttons button {
+            width: 100%; /* ياخذ كامل العرض */
+            padding: 15px 0; /* تصغير الحجم */
+        }
+    }
+    </style>
+</head>
+<body>
+
+    <!-- فيديو الخلفية -->
+    <video class="background-video" autoplay muted loop playsinline>
+        <source src="video2.mp4" type="video/mp4">
+        متصفحك لا يدعم الفيديو
+    </video>
+
+    <!-- طبقة التعتيم -->
+    <div class="overlay"></div>
+
+    <!-- محتوى الصفحة -->
+    <div class="content">
+        <h1>Gordon Ramsay Menu</h1>
+
+        <div class="buttons">
+            <a href="Arabic.HTML"><button>العربي</button></a>
+            <a href="Kurdish.HTML"><button>کوردی (سورانی)</button></a>
+            <a href="Engelish.HTML"><button>English</button></a>
+        </div>
+    </div>
+
+    <!-- أيقونات التواصل + الموقع -->
+    <div class="social-icons">
+        <a href="https://www.instagram.com/gordonramsaystreetburger.krd?igsh=MTY3c2IzZXl5MGNwMQ==" target="_blank" aria-label="Instagram">
+            <i class="fa-brands fa-instagram"></i>
+        </a>
+
+        <a href="https://www.facebook.com/share/17PAjFWQpn/?mibextid=wwXIfr" target="_blank" aria-label="Facebook">
+            <i class="fa-brands fa-facebook-f"></i>
+        </a>
+
+        <a href="https://maps.app.goo.gl/2N3Nuu23ERDdGFMY8?g_st=ic" target="_blank" aria-label="Location">
+            <i class="fa-solid fa-location-dot"></i>
+        </a>
+    </div>
+
+</body>
+</html>
